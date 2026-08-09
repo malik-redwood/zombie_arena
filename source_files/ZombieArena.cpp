@@ -38,7 +38,48 @@ int main()
         // The main game loop
         while (window.isOpen())
         {
+                /*
+************
+Handle input
+************
+*/
+// Handle events by polling std::optional<sf::Event>
+while (const auto event = window.pollEvent())
+{
+    // Handle Window Close Event (Esc / X button)
+    if (event->is<sf::Event::Closed>())
+    {
+        window.close();
+    }
 
+    // Handle Key Presses
+    if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+    {
+        // Pause game while playing
+        if (keyPressed->code == sf::Keyboard::Key::Enter && state == State::PLAYING)
+        {
+            state = State::PAUSED;
+        }
+        // Unpause while paused
+        else if (keyPressed->code == sf::Keyboard::Key::Enter && state == State::PAUSED)
+        {
+            state = State::PLAYING;
+            // Reset clock to avoid a delta-time frame spike
+            clock.restart();
+        }
+        // Start a new game while in GAME_OVER state
+        else if (keyPressed->code == sf::Keyboard::Key::Enter && state == State::GAME_OVER)
+        {
+            state = State::LEVELING_UP;
+        }
+
+        // Gameplay input when state is PLAYING
+        if (state == State::PLAYING)
+        {
+            // Handle player movement key press toggles here
+        }
+    }
+} // End event polling
         }
 
         return 0;
